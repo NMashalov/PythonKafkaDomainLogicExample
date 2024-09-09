@@ -1,0 +1,20 @@
+[tool.poetry]
+name = "app"
+version = "0.1.0"
+description = ""
+authors = ["n.mashalov"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.11"
+kafka-python = "^2.0.2"
+pydantic-settings = "^2.4.0"
+pydantic = "^2.9.1"
+
+
+[tool.poetry.group.dev.dependencies]
+ruff = "^0.6.4"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
