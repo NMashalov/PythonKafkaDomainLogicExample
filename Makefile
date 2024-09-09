@@ -1,2 +1,12 @@
+export 
+
+PROJECT_DIR=app
+
+format:
+	ruff format $(PROJECT_DIR)
+
 release:
-    poetry install
+	poetry publish
+
+run:
+	docker compose up
