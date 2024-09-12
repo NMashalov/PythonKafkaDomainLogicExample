@@ -3,36 +3,59 @@ version: '2'
 services:
   zookeeper:
     image: confluentinc/cp-zookeeper:4.1.0
-    hostname: zookeeper
-    environment:
-      SERVICE_NAME: zookeeper
-      ZOOKEEPER_CLIENT_PORT: 2181
-      ZOOKEEPER_TICK_TIME: 2000
-      zk_id: "1"
+    volumes:
+        - ./configs/zookeeper_jaas.conf:/etc/kafka/zookeeper_jaas.conf
     ports:
       - "2181:2181"
-
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+      KAFKA_OPTS: -Djava.security.auth.login.config=/etc/kafka/zookeeper_jaas.conf
+          -Dzookeeper.authProvider.1=org.apache.zookeeper.server.auth.SASLAuthenticationProvider
+          -Dzookeeper.allowSaslFailedClients=false
+          -Dzookeeper.requireClientAuthScheme=sasl
+  
   kafka:
+    volumes:
+      - ./configs/broker_jaas.conf:/etc/kafka/broker_jaas.conf
     image: confluentinc/cp-kafka:4.1.0
-    hostname: kafka
     links:
       - zookeeper
     ports:
       - "9092:9092"
     environment:
+      KAFKA_OPTS: "-Djava.security.auth.login.config=/etc/kafka/broker_jaas.conf"
       KAFKA_ZOOKEEPER_CONNECT: "zookeeper:2181"
-      KAFKA_ADVERTISED_LISTENERS: "PLAINTEXT://kafka:9092"
+
+      KAFKA_LISTENER_NAME_HOST_SASL_ENABLED_MECHANISMS: PLAIN
+      KAFKA_LISTENER_NAME_HOST_PLAIN_SASL_JAAS_CONFIG: |
+              org.apache.kafka.common.security.plain.PlainLoginModule required \
+              username="broker" \
+              password="broker" \
+              user_broker="broker";
+      KAFKA_LISTENER_NAME_BROKER_SASL_ENABLED_MECHANISMS: PLAIN
+      KAFKA_LISTENER_NAME_BROKER_PLAIN_SASL_JAAS_CONFIG: |
+              org.apache.kafka.common.security.plain.PlainLoginModule required \
+              username="broker" \
+              password="broker" \
+              user_broker="broker";
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: BROKER:SASL_PLAINTEXT
+
+      KAFKA_INTER_BROKER_LISTENER_NAME: BROKER
+      KAFKA_SASL_MECHANISM_INTER_BROKER_PROTOCOL: PLAIN
+
+      KAFKA_ADVERTISED_LISTENERS: "BROKER://kafka:9092"
+      KAFKA_LISTENERS: "BROKER://:9092"
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
 
-  schema-registry:
-    image: confluentinc/cp-schema-registry:4.1.0
-    hostname: schema-registry
-    links:
-      - kafka
-      - zookeeper
-    ports:
-      - "8081:8081"
-    environment:
-      SCHEMA_REGISTRY_KAFKASTORE_CONNECTION_URL: "zookeeper:2181"
-      SCHEMA_REGISTRY_KAFKASTORE_BOOTSTRAP_SERVERS: "PLAINTEXT://kafka:9092"
-      SCHEMA_REGISTRY_HOST_NAME: schema-registry
+  # schema-registry:
+  #   image: confluentinc/cp-schema-registry:4.1.0
+  #   hostname: schema-registry
+  #   links:
+  #     - kafka
+  #     - zookeeper
+  #   ports:
+  #     - "8081:8081"
+  #   environment:
+  #     SCHEMA_REGISTRY_KAFKASTORE_CONNECTION_URL: "zookeeper:2181"
+  #     SCHEMA_REGISTRY_KAFKASTORE_BOOTSTRAP_SERVERS: "PLAINTEXT://kafka:9092"
+  #     SCHEMA_REGISTRY_HOST_NAME: schema-registry

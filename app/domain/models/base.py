@@ -1,3 +1,8 @@
 from pydantic import BaseModel
 
-from fastavro import parse_schema
+
+class InputModel(BaseModel):
+    pass
+
+class PayloadModel(BaseModel):
+    pass
