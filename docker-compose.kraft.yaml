@@ -1,7 +1,7 @@
 version: '3'
 
 x-creds: &sasl-security
-    KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: 'CONTROLLER:PLAINTEXT,PLAINTEXT:PLAINTEXT,BROKER:PLAINTEXT'
+    KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: 'CONTROLLER:PLAINTEXT,PLAINTEXT:PLAINTEXT,BROKER:SASL_PLAINTEXT'
     KAFKA_PROCESS_ROLES: 'broker,controller' 
     KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1 
     KAFKA_CONTROLLER_QUORUM_VOTERS: '1@kafka1:9093,2@kafka2:9093,3@kafka3:9093' 
@@ -13,7 +13,7 @@ x-creds: &sasl-security
       org.apache.kafka.common.security.plain.PlainLoginModule required \
       username="broker" \
       password="broker" \
-      user_admin="admin_password"
+      user_admin="admin_password" \
       user_producer="producer_password" \
       user_consumer="consumer_password";
 
