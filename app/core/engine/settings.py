@@ -1,6 +1,13 @@
-from pydantic import BaseModel
+from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
-class ProduceSettings(BaseModel):
-    bootstrap_servers: list[str]
+
+class ProduceSettings(BaseSettings):
+    bootstrap_servers: str
+    username: str
+    password: str
     topic: str
+    sasl_mechanism: str
+    security_protocol: str
+
+    model_config = SettingsConfigDict(env_file='.env',)

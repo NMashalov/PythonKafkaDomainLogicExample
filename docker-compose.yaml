@@ -13,6 +13,8 @@ services:
           -Dzookeeper.authProvider.1=org.apache.zookeeper.server.auth.SASLAuthenticationProvider
           -Dzookeeper.allowSaslFailedClients=false
           -Dzookeeper.requireClientAuthScheme=sasl
+
+
   
   kafka:
     volumes:
@@ -25,7 +27,6 @@ services:
     environment:
       KAFKA_OPTS: "-Djava.security.auth.login.config=/etc/kafka/broker_jaas.conf"
       KAFKA_ZOOKEEPER_CONNECT: "zookeeper:2181"
-
       KAFKA_LISTENER_NAME_HOST_SASL_ENABLED_MECHANISMS: PLAIN
       KAFKA_LISTENER_NAME_HOST_PLAIN_SASL_JAAS_CONFIG: |
               org.apache.kafka.common.security.plain.PlainLoginModule required \
@@ -47,6 +48,8 @@ services:
       KAFKA_LISTENERS: "BROKER://:9092"
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
 
+      KAFKA_ZOOKEEPER_CONNECT: ignored
+    
   # schema-registry:
   #   image: confluentinc/cp-schema-registry:4.1.0
   #   hostname: schema-registry

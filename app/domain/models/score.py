@@ -1,10 +1,10 @@
 from datetime import datetime
-from enum import Enum
+from enum import StrEnum
 
 from pydantic import BaseModel
 
 
-class ScoreType(Enum):
+class ScoreType(StrEnum):
     novice = 'novice'
     expert = 'expert'
 
@@ -13,7 +13,7 @@ class ScoreInput(BaseModel):
     score_type: ScoreType
     datetime: datetime
 
-class ScoreInput(BaseModel):
+class ScoreOutput(BaseModel):
     username: str
     score_type: ScoreType
     datetime: datetime

@@ -1,5 +1,4 @@
 from app.core.engine.producer import ProducerFactory
-from app.domain.models.image import Image
 from app.core.io.image import ImageFolder
 from app.domain.repository.base import BaseRepository
 
